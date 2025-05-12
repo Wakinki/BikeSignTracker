@@ -46,7 +46,9 @@ public class SignTable implements Serializable {
 
 
     public void saveToFile(String path) throws IOException {
-        File file = new File(path);
+
+        String filePath = ensureFileExtension(path, ".bst");
+        File file = new File(filePath);
 
 
         File parentDir = file.getParentFile();
@@ -55,26 +57,48 @@ public class SignTable implements Serializable {
         }
 
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
-            out.writeObject(this);
+
+            out.writeObject(this.signs);
+            System.out.println("Successfully saved signs to file: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("Error saving signs to file: " + e.getMessage());
+            throw e;
         }
     }
 
-
     public static void loadFromFile(String path) throws IOException, ClassNotFoundException {
-        File file = new File(path);
+
+        String filePath = ensureFileExtension(path, ".bst");
+        File file = new File(filePath);
+
+        System.out.println("Attempting to load from file: " + file.getAbsolutePath());
 
         if (!file.exists()) {
-            // File doesn't exist, nothing to load
+            System.out.println("File does not exist: " + file.getAbsolutePath());
+
             return;
         }
 
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
-            SignTable loaded = (SignTable) in.readObject();
-            getInstance().setSigns(loaded.getSigns());
+
+            ArrayList<Sign> loadedSigns = (ArrayList<Sign>) in.readObject();
+            getInstance().setSigns(loadedSigns);
+            System.out.println("Successfully loaded " + loadedSigns.size() + " signs from file");
+        } catch (InvalidClassException e) {
+            System.err.println("Class definition has changed, cannot load file: " + e.getMessage());
+
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error loading signs from file: " + e.getMessage());
+            throw e;
         }
     }
 
-
+    private static String ensureFileExtension(String path, String extension) {
+        if (!path.toLowerCase().endsWith(extension)) {
+            return path + extension;
+        }
+        return path;
+    }
     private Object readResolve() throws ObjectStreamException {
         return instance;
     }

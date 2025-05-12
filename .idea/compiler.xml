@@ -9,8 +9,5 @@
         <module name="BikeSignTracker" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="BikeSignTracker" target="0" />
-    </bytecodeTargetLevel>
   </component>
 </project>
