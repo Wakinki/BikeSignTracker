@@ -5,6 +5,8 @@
 <?import javafx.scene.layout.VBox?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
 <VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.bikesigntracker.HelloController">
     <padding>
@@ -12,6 +14,14 @@
     </padding>
 
     <Label fx:id="welcomeText"/>
+    <TableView fx:id="cycleSignTable" >
+        <columns>
+            <TableColumn fx:id="typeColumn"  />
+            <TableColumn fx:id="nameColumn"  />
+            <TableColumn fx:id="amountColumn"  />
+            <TableColumn fx:id="isPrintedColumn"  />
+        </columns>
+    </TableView>
     <Button text="Save" onAction="#onSaveButtonClick"/>
     <Button text="Add sign" onAction="#onAddButtonClick"/>
 </VBox>

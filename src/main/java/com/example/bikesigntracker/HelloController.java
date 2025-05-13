@@ -1,10 +1,14 @@
 package com.example.bikesigntracker;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -20,6 +24,18 @@ public class HelloController implements Initializable {
 
     @FXML
     private Label welcomeText;
+    @FXML
+    private TableView<Sign> cycleSignTable;
+    @FXML
+    private TableColumn<CycleSign, ECycleSignType> typeColumn;
+    @FXML
+    private TableColumn<CycleSign, String> nameColumn;
+    @FXML
+    private TableColumn<CycleSign, Integer> amountColumn;
+    @FXML
+    private TableColumn<CycleSign, Boolean> isPrintedColumn;
+
+    private ObservableList<Sign> signsData = FXCollections.observableArrayList();
 
     public HelloController() {
 
@@ -39,10 +55,20 @@ public class HelloController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("label"));
+        amountColumn.setCellValueFactory(new PropertyValueFactory<>("count"));
+        isPrintedColumn.setCellValueFactory(new PropertyValueFactory<>("isPrinted"));
+
+        cycleSignTable.setItems(signsData);
+
         try {
-            SignTable.loadFromFile(filePath);
             SignTable signs = SignTable.getInstance();
-            welcomeText.setText(signs.toString());
+            SignTable.loadFromFile(filePath);
+
+            signsData.addAll(signs.getSigns());
+
+
         } catch (IOException e){
             System.out.println("Error occurred when trying to manipulate file");
             e.printStackTrace();
