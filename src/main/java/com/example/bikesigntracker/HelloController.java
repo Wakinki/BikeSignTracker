@@ -45,6 +45,9 @@ public class HelloController implements Initializable {
     @FXML
     private Button deleteSelectedButton;
 
+    @FXML
+    private CheckBox selectAllCheckbox;
+
     private ObservableList<Sign> signsData = FXCollections.observableArrayList();
 
     private ObservableSet<Integer> selectedIndices = FXCollections.observableSet();
@@ -69,6 +72,10 @@ public class HelloController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         cycleSignTable.setEditable(true);
+
+        selectAllCheckbox.selectedProperty().addListener((obs, wasSelected, isSelected)->{
+            onSelectAllCheckboxSwitch(wasSelected);
+        });
 
         selectColumn.setCellValueFactory(cellData -> {
             Sign sign = cellData.getValue();
@@ -185,8 +192,14 @@ public class HelloController implements Initializable {
     }
 
     @FXML
-    protected void onSelectAllButtonClick() {
+    protected void onSelectAllCheckboxSwitch(boolean wasChecked) {
+
         selectedIndices.clear();
+        if(wasChecked){
+            cycleSignTable.refresh();
+            return;
+        }
+
         for (int i = 0; i < signsData.size(); i++) {
             selectedIndices.add(i);
         }

@@ -9,13 +9,17 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.control.CheckBox?>
 <VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.bikesigntracker.HelloController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
     <HBox>
-    <Text >Cyklistické značky</Text>
+    <Text style="-fx-font-size: 28px; -fx-font-weight: bold;">Značky cyklotras</Text>
+    </HBox>
+    <HBox>
+        <CheckBox fx:id="selectAllCheckbox" text="Vybrat vše"/>
     </HBox>
     <TableView fx:id="cycleSignTable" >
         <columns>
@@ -29,7 +33,6 @@
     <HBox spacing="10">
         <Button text="Uložit" onAction="#onSaveButtonClick"/>
         <Button text="Přidat značku" onAction="#onAddButtonClick"/>
-        <Button text="Vybrat všechny" onAction="#onSelectAllButtonClick"/>
         <Button fx:id="deleteSelectedButton" text="Odebrat vybrané" onAction="#onRemoveSelectedButtonClick"/>
 
     </HBox>
