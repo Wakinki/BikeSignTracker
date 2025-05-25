@@ -13,11 +13,12 @@ public class HelloApplication extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 600);
-        stage.setTitle("Hello!");
+        stage.setTitle("Bike sign tracker");
+
 
         stage.setScene(scene);
         SignTable signs = SignTable.getInstance();
-        signs.addSign(new CycleSign(10, "A28", false, ECycleSignType.LEFT));
+
         stage.show();
     }
 

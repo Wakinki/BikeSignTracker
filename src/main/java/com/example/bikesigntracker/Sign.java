@@ -28,7 +28,7 @@ public class Sign implements Serializable {
         return label;
     }
 
-    public boolean isPrinted() {
+    public boolean getIsPrinted() {
         return isPrinted;
     }
 

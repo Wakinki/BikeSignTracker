@@ -15,6 +15,14 @@ public class CycleSign extends Sign implements Serializable {
         super(count, label, isPrinted);
     }
 
+    public ECycleSignType getType() {
+        return type;
+    }
+
+    public void setType(ECycleSignType type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return "CycleSign{" +
