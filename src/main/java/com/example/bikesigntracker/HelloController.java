@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -48,7 +49,11 @@ public class HelloController implements Initializable {
     @FXML
     private CheckBox selectAllCheckbox;
 
+    @FXML
+    private TextField searchField;
+
     private ObservableList<Sign> signsData = FXCollections.observableArrayList();
+    private FilteredList<Sign> filteredSigns;
 
     private ObservableSet<Integer> selectedIndices = FXCollections.observableSet();
 
@@ -73,13 +78,11 @@ public class HelloController implements Initializable {
 
         cycleSignTable.setEditable(true);
 
-        selectAllCheckbox.selectedProperty().addListener((obs, wasSelected, isSelected)->{
-            onSelectAllCheckboxSwitch(wasSelected);
-        });
+
 
         selectColumn.setCellValueFactory(cellData -> {
             Sign sign = cellData.getValue();
-            int index = signsData.indexOf(sign);
+            int index = filteredSigns.indexOf(sign);
             SimpleBooleanProperty property = new SimpleBooleanProperty(selectedIndices.contains(index));
 
             property.addListener((observable, oldValue, newValue) -> {
@@ -137,17 +140,72 @@ public class HelloController implements Initializable {
 
 
         signsData = signs.getSigns();
-        cycleSignTable.setItems(signsData);
+        filteredSigns = new FilteredList<>(signsData, p -> true);
+        cycleSignTable.setItems(filteredSigns);
+
+        setupSearchField();
+
+        selectAllCheckbox.selectedProperty().addListener((obs, wasSelected, isSelected)->{
+            onSelectAllCheckboxSwitch(wasSelected);
+        });
 
         signsData.addListener((javafx.collections.ListChangeListener<Sign>) change -> {
             while (change.next()) {
                 if (change.wasRemoved()) {
-                    // Clear selection when items are removed to avoid index issues
+
                     selectedIndices.clear();
                     cycleSignTable.refresh();
                 }
             }
         });
+    }
+
+    private void setupSearchField() {
+        if (searchField != null) {
+            searchField.setPromptText("Hledat podle názvu nebo typu...");
+
+            searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+                filteredSigns.setPredicate(sign -> {
+                    // If search text is empty, show all items
+                    if (newValue == null || newValue.trim().isEmpty()) {
+                        return true;
+                    }
+
+                    String lowerCaseFilter = newValue.toLowerCase().trim();
+
+                    // Search in sign label/name
+                    if (sign.getLabel().toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                    }
+
+                    // Search in sign type (if it's a CycleSign)
+                    if (sign instanceof CycleSign) {
+                        CycleSign cycleSign = (CycleSign) sign;
+                        String typeText = cycleSign.getType().toString();
+                        if (typeText.toLowerCase().contains(lowerCaseFilter)) {
+                            return true;
+                        }
+                    }
+
+                    // Search by count (convert to string and check)
+                    if (String.valueOf(sign.getCount()).contains(lowerCaseFilter)) {
+                        return true;
+                    }
+
+                    // Search by printed status
+                    String printedText = sign.getIsPrinted() ? "vytisklá" : "nevytisklá";
+                    if (printedText.contains(lowerCaseFilter)) {
+                        return true;
+                    }
+
+                    return false;
+                });
+
+                // Clear selection when filter changes to avoid confusion
+                selectedIndices.clear();
+                selectAllCheckbox.setSelected(false);
+            });
+        }
     }
 
     @FXML
@@ -172,8 +230,8 @@ public class HelloController implements Initializable {
 
 
             for (Integer index : selectedIndices) {
-                if (index < signsData.size()) {
-                    signsToRemove.add(signsData.get(index));
+                if (index < filteredSigns.size()) {
+                    signsToRemove.add(filteredSigns.get(index));
                 }
             }
 
@@ -200,7 +258,7 @@ public class HelloController implements Initializable {
             return;
         }
 
-        for (int i = 0; i < signsData.size(); i++) {
+        for (int i = 0; i < filteredSigns.size(); i++) {
             selectedIndices.add(i);
         }
         cycleSignTable.refresh();
@@ -269,6 +327,13 @@ public class HelloController implements Initializable {
                 alert.setContentText("Počet musí být číslo");
                 alert.showAndWait();
             }
+        }
+    }
+
+    @FXML
+    protected void onClearSearchButtonClick() {
+        if (searchField != null) {
+            searchField.clear();
         }
     }
 

@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.TextField?>
 <VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.bikesigntracker.HelloController">
     <padding>
@@ -18,8 +19,12 @@
     <HBox>
     <Text style="-fx-font-size: 28px; -fx-font-weight: bold;">Značky cyklotras</Text>
     </HBox>
-    <HBox>
+    <HBox spacing="10">
         <CheckBox fx:id="selectAllCheckbox" text="Vybrat vše"/>
+        <HBox spacing="5">
+            <TextField fx:id="searchField" promptText="Hledat podle názvu nebo typu..." prefWidth="200"/>
+            <Button text="Vymazat" onAction="#onClearSearchButtonClick" />
+        </HBox>
     </HBox>
     <TableView fx:id="cycleSignTable" >
         <columns>
