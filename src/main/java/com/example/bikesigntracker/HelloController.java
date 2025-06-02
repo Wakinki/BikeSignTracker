@@ -166,19 +166,17 @@ public class HelloController implements Initializable {
 
             searchField.textProperty().addListener((observable, oldValue, newValue) -> {
                 filteredSigns.setPredicate(sign -> {
-                    // If search text is empty, show all items
+
                     if (newValue == null || newValue.trim().isEmpty()) {
                         return true;
                     }
 
                     String lowerCaseFilter = newValue.toLowerCase().trim();
 
-                    // Search in sign label/name
                     if (sign.getLabel().toLowerCase().contains(lowerCaseFilter)) {
                         return true;
                     }
 
-                    // Search in sign type (if it's a CycleSign)
                     if (sign instanceof CycleSign) {
                         CycleSign cycleSign = (CycleSign) sign;
                         String typeText = cycleSign.getType().toString();
@@ -187,21 +185,14 @@ public class HelloController implements Initializable {
                         }
                     }
 
-                    // Search by count (convert to string and check)
                     if (String.valueOf(sign.getCount()).contains(lowerCaseFilter)) {
                         return true;
                     }
 
-                    // Search by printed status
                     String printedText = sign.getIsPrinted() ? "vytisklá" : "nevytisklá";
-                    if (printedText.contains(lowerCaseFilter)) {
-                        return true;
-                    }
-
-                    return false;
+                    return printedText.contains(lowerCaseFilter);
                 });
 
-                // Clear selection when filter changes to avoid confusion
                 selectedIndices.clear();
                 selectAllCheckbox.setSelected(false);
             });
